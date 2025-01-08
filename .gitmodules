@@ -7,3 +7,6 @@
 [submodule "SIBR_viewers"]
 	path = SIBR_viewers
 	url = https://gitlab.inria.fr/sibr/sibr_core.git
+[submodule "submodules/mask-diff-gaussian-rasterization"]
+	path = submodules/mask-diff-gaussian-rasterization
+	url = git@github.com:kaikai23/mask-diff-gaussian-rasterization.git

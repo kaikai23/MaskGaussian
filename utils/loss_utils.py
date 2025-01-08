@@ -62,3 +62,13 @@ def _ssim(img1, img2, window, window_size, channel, size_average=True):
     else:
         return ssim_map.mean(1).mean(1).mean(1)
 
+def simple_scheduler(iteration, lambda_mask, type='constant'):
+    if type == 'constant':
+        return lambda_mask
+    elif type == 'halfway':
+        return lambda_mask if 15000 < iteration else 0
+    elif type == 'late':
+        return lambda_mask if 19000 < iteration < 20000 else 0
+    else:
+        raise NotImplementedError
+
