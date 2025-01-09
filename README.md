@@ -1,6 +1,6 @@
 # MaskGaussian: Adaptive 3D Gaussian Representation from Probabilistic Masks
 
-### [[Paper(arxiv)](https://arxiv.org/abs/2311.13681)]
+### [[Paper(arxiv)](https://arxiv.org/abs/2412.20522)]
 
 ## Method Overview
 **MaskGaussian** is a method for pruning the number of Gaussians while preserving high reconstruction quality. It treats Gaussian points as probabilistically existing, and samples them to render a scene. Unsampled Gaussians do not affect the rendering outcome but can still receive meaningful gradients to dynamically adjust their usage probability. This is enabled by our [mask-diff-gaussian-rasterization](https://github.com/kaikai23/mask-diff-gaussian-rasterization), which applies masks during the rasterization process instead of multiplying them with Gaussian attributes.
