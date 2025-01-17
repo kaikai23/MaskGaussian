@@ -91,7 +91,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         gt_image = viewpoint_cam.original_image.cuda()
         Ll1 = l1_loss(image, gt_image)
         mask_loss = (torch.mean(mask))**2
-        lambda_mask = simple_scheduler(iteration, opt.lambda_mask, type="constant")
+        lambda_mask = simple_scheduler(iteration, opt.lambda_mask, type=dataset.mask_type)
         loss = (1.0 - opt.lambda_dssim) * Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image)) + lambda_mask * mask_loss
         loss.backward()
 

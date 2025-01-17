@@ -18,7 +18,7 @@ conda activate maskgs
 ```
 3. **Install Dependencies**
 ```
-pip install plyfile tqdm torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --extra-index-url https://download.pytorch.org/whl/cu118
+pip install "numpy<2.0" plyfile tqdm torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --extra-index-url https://download.pytorch.org/whl/cu118
 conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
 ```
 4. **Install Submodules**
@@ -40,6 +40,22 @@ python save_ply_nomask.py -m <output_folder>
 ```
 The result will be save to `<outputfolder>/point_cloud/<last_iteration+1>/point_cloud.ply`, and can be rendered and viewed just like original 3DGS.
 
+## Evaluation
+We recommend directly using the original [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) to evaluate the resulting ply file from the last step.
+
+## Hyperparameters
+The default configuration applies masks throughout the training process and strikes a balance between reconstruction quality, number of primitives and GPU consumption. 
+
+To use masks in different phases, the following hyperparameters should be changed:
+
+ - **--lambda_mask**: the coefficient of the mask loss added to the total loss. Default: 0.0005
+ - **--mask_type**: have 3 options. 'constant': use masks all the way. 'halfway': use masks after 15,000 iterations. 'late': use masks during 19,000~20,000 iterations. Default: 'constant'.
+
+We provide 2 recommended configurations:<br/>
+**Best PSNR + least number of Gaussian primitives**: `--lambda_mask 0.1 --mask_type late` <br/>
+**Save GPU memory in training**: `--lambda_mask 0.001 --mask_type constant`
+
+
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
@@ -54,5 +70,3 @@ The result will be save to `<outputfolder>/point_cloud/<last_iteration+1>/point_
 }</code></pre>
   </div>
 </section>
-
-
