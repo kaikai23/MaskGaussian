@@ -1,4 +1,4 @@
-# MaskGaussian: Adaptive 3D Gaussian Representation from Probabilistic Masks
+# MaskGaussian: Adaptive 3D Gaussian Representation from Probabilistic Masks [CVPR 2025]
 
 ### [[Paper(arxiv)](https://arxiv.org/abs/2412.20522)]
 
