@@ -22,6 +22,8 @@ from pathlib import Path
 from plyfile import PlyData, PlyElement
 from utils.sh_utils import SH2RGB
 from scene.gaussian_model import BasicPointCloud
+from multiprocessing.pool import ThreadPool
+from tqdm import tqdm
 
 class CameraInfo(NamedTuple):
     uid: int
@@ -34,6 +36,10 @@ class CameraInfo(NamedTuple):
     image_name: str
     width: int
     height: int
+    fl_x: float = -1.0
+    fl_y: float = -1.0
+    cx: float = -1.0
+    cy: float = -1.0
 
 class SceneInfo(NamedTuple):
     point_cloud: BasicPointCloud
@@ -67,12 +73,13 @@ def getNerfppNorm(cam_info):
 
 def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
     cam_infos = []
-    for idx, key in enumerate(cam_extrinsics):
-        sys.stdout.write('\r')
-        # the exact output you're looking for:
-        sys.stdout.write("Reading camera {}/{}".format(idx+1, len(cam_extrinsics)))
-        sys.stdout.flush()
-
+    tbar = tqdm(range(len(cam_extrinsics)))
+    sys.stdout.write('\r')
+    sys.stdout.write("[Scene] Reading {} cameras".format(len(cam_extrinsics)))
+    sys.stdout.flush()
+    # for idx, key in enumerate(cam_extrinsics):
+    def process_frame(key):
+        tbar.update(1)
         extr = cam_extrinsics[key]
         intr = cam_intrinsics[extr.camera_id]
         height = intr.height
@@ -86,11 +93,18 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
             focal_length_x = intr.params[0]
             FovY = focal2fov(focal_length_x, height)
             FovX = focal2fov(focal_length_x, width)
+            fl_x = fl_y = focal_length_x
+            cx = intr.params[1]
+            cy = intr.params[2]
         elif intr.model=="PINHOLE":
             focal_length_x = intr.params[0]
             focal_length_y = intr.params[1]
             FovY = focal2fov(focal_length_y, height)
             FovX = focal2fov(focal_length_x, width)
+            fl_x = focal_length_x
+            fl_y = focal_length_y
+            cx = intr.params[2]
+            cy = intr.params[3]
         else:
             assert False, "Colmap camera model not handled: only undistorted datasets (PINHOLE or SIMPLE_PINHOLE cameras) supported!"
 
@@ -98,9 +112,13 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
         image_name = os.path.basename(image_path).split(".")[0]
         image = Image.open(image_path)
 
-        cam_info = CameraInfo(uid=uid, R=R, T=T, FovY=FovY, FovX=FovX, image=image,
-                              image_path=image_path, image_name=image_name, width=width, height=height)
-        cam_infos.append(cam_info)
+        return CameraInfo(uid=uid, R=R, T=T, FovY=FovY, FovX=FovX, image=image,
+                              image_path=image_path, image_name=image_name, width=width, height=height,
+                              fl_x=fl_x, fl_y=fl_y, cx=cx, cy=cy)
+    with ThreadPool() as pool:
+        cam_infos = pool.map(process_frame, cam_extrinsics)
+        pool.close()
+        pool.join()
     sys.stdout.write('\n')
     return cam_infos
 

@@ -13,6 +13,9 @@ from scene.cameras import Camera
 import numpy as np
 from utils.general_utils import PILtoTorch
 from utils.graphics_utils import fov2focal
+import torch
+from multiprocessing.pool import ThreadPool
+from tqdm import tqdm
 
 WARNED = False
 
@@ -37,6 +40,11 @@ def loadCam(args, id, cam_info, resolution_scale):
 
         scale = float(global_down) * float(resolution_scale)
         resolution = (int(orig_w / scale), int(orig_h / scale))
+    
+    cx = cam_info.cx / scale
+    cy = cam_info.cy / scale
+    fl_y =  cam_info.fl_y / scale
+    fl_x = cam_info.fl_x / scale
 
     resized_image_rgb = PILtoTorch(cam_info.image, resolution)
 
@@ -49,13 +57,21 @@ def loadCam(args, id, cam_info, resolution_scale):
     return Camera(colmap_id=cam_info.uid, R=cam_info.R, T=cam_info.T, 
                   FoVx=cam_info.FovX, FoVy=cam_info.FovY, 
                   image=gt_image, gt_alpha_mask=loaded_mask,
-                  image_name=cam_info.image_name, uid=id, data_device=args.data_device)
+                  image_name=cam_info.image_name, uid=id, data_device=args.data_device,
+                  cx=cx, cy=cy, fl_x=fl_x, fl_y=fl_y)
 
 def cameraList_from_camInfos(cam_infos, resolution_scale, args):
     camera_list = []
 
-    for id, c in enumerate(cam_infos):
-        camera_list.append(loadCam(args, id, c, resolution_scale))
+    torch.inverse(torch.ones((1, 1), device='cuda:0'))
+    tbar = tqdm(range(len(cam_infos)))
+    def process_cam(id_caminfo):
+        tbar.update(1)
+        id = id_caminfo[0]
+        c = id_caminfo[1]
+        return loadCam(args, id, c, resolution_scale)
+    with ThreadPool() as pool:
+        camera_list = pool.map(process_cam, zip(range(len(cam_infos)), cam_infos))
 
     return camera_list
 

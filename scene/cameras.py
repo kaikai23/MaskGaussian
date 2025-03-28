@@ -12,12 +12,13 @@
 import torch
 from torch import nn
 import numpy as np
-from utils.graphics_utils import getWorld2View2, getProjectionMatrix
+from utils.graphics_utils import getWorld2View2, getProjectionMatrix, getProjectionMatrixCenterShift
 
 class Camera(nn.Module):
     def __init__(self, colmap_id, R, T, FoVx, FoVy, image, gt_alpha_mask,
                  image_name, uid,
-                 trans=np.array([0.0, 0.0, 0.0]), scale=1.0, data_device = "cuda"
+                 trans=np.array([0.0, 0.0, 0.0]), scale=1.0, data_device = "cuda",
+                 cx=-1, cy=-1, fl_x=-1, fl_y=-1,
                  ):
         super(Camera, self).__init__()
 
@@ -28,6 +29,10 @@ class Camera(nn.Module):
         self.FoVx = FoVx
         self.FoVy = FoVy
         self.image_name = image_name
+        self.cx = cx
+        self.cy = cy
+        self.fl_x = fl_x
+        self.fl_y = fl_y
 
         try:
             self.data_device = torch.device(data_device)
@@ -52,7 +57,12 @@ class Camera(nn.Module):
         self.scale = scale
 
         self.world_view_transform = torch.tensor(getWorld2View2(R, T, trans, scale)).transpose(0, 1).cuda()
-        self.projection_matrix = getProjectionMatrix(znear=self.znear, zfar=self.zfar, fovX=self.FoVx, fovY=self.FoVy).transpose(0,1).cuda()
+        if 0.3 < float(cx/self.image_width) < 0.7 and\
+            0.3 < float(cy/self.image_height) < 0.7:
+            self.projection_matrix = getProjectionMatrixCenterShift(self.znear, self.zfar, cx, cy, fl_x, fl_y, \
+                                                                    self.image_width, self.image_height).transpose(0, 1).cuda()
+        else:  # Deep Blending camera has invalid cx and cy, fall back to assumption that the camera has cx=(1/2)*width  
+            self.projection_matrix = getProjectionMatrix(znear=self.znear, zfar=self.zfar, fovX=self.FoVx, fovY=self.FoVy).transpose(0,1).cuda()
         self.full_proj_transform = (self.world_view_transform.unsqueeze(0).bmm(self.projection_matrix.unsqueeze(0))).squeeze(0)
         self.camera_center = self.world_view_transform.inverse()[3, :3]
 
