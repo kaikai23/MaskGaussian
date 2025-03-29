@@ -1,9 +1,27 @@
 # MaskGaussian: Adaptive 3D Gaussian Representation from Probabilistic Masks [CVPR 2025]
 
-### [[Paper(arxiv)](https://arxiv.org/abs/2412.20522)]
+<div id="top" align="center">
+ 
+<a href="https://arxiv.org/abs/2412.20522"><img src="https://img.shields.io/badge/Arxiv-2412.20522-B31B1B.svg"></a>
+<a href=""><img src="https://img.shields.io/badge/Project-Page-048C3D"></a>
+<a href="https://github.com/kaikai23/MaskGaussian"><img src="https://img.shields.io/github/stars/kaikai23/MaskGaussian"></a>
+</div>
 
-## Method Overview
-**MaskGaussian** is a method for pruning the number of Gaussians while preserving high reconstruction quality. It treats Gaussian points as probabilistically existing, and samples them to render a scene. Unsampled Gaussians do not affect the rendering outcome but can still receive meaningful gradients to dynamically adjust their usage probability. This is enabled by our [mask-diff-gaussian-rasterization](https://github.com/kaikai23/mask-diff-gaussian-rasterization), which applies masks during the rasterization process instead of multiplying them with Gaussian attributes.
+
+## :mega: Updates
+[03/2025] 🎈: Post-training code is released. Now you can also directly use MaskGaussian to prune an already trained 3D-GS!
+
+[02/2025] Accepted to [CVPR 2025](https://cvpr.thecvf.com/).
+
+[01/2025] We release the code.
+
+## Overview
+We introduce MaskGaussian to prune Gaussians while retaining reconstruction quality. It dynamically samples a subset of Gaussians to render the scene during training. Not sampled Gaussians also receive gradients through [mask-diff-gaussian-rasterization](https://github.com/kaikai23/mask-diff-gaussian-rasterization) and update their chance to be used in future iterations.
+
+Our method improves rendering speed, reduces model size, GPU memory, and training time, and supports both training from scratch and post-training refinement.
+
+<img height="250" alt="image" src="https://github.com/user-attachments/assets/4855522d-9fb2-4044-90f2-1ff9cb62b1d1" />
+
 
 ## Installation
 1. **Clone the repository**
@@ -11,50 +29,65 @@
 git clone --recursive https://github.com/kaikai23/MaskGaussian.git
 cd MaskGaussian
 ```
-2. **Create conda environment**
+2. **Install dependencies**
 ```
 conda create -n maskgs python=3.9
 conda activate maskgs
-```
-3. **Install Dependencies**
-```
-pip install "numpy<2.0" plyfile tqdm torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --extra-index-url https://download.pytorch.org/whl/cu118
-conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
-```
-4. **Install Submodules**
-```
-CUDA_HOME=PATH/TO/CONDA/envs/maskgs pip install submodules/mask-diff-gaussian-rasterization submodules/simple-knn/
+pip install "numpy<2.0" plyfile tqdm icecream torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --extra-index-url https://download.pytorch.org/whl/cu118
+conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit  # can be skipped if cuda-11.8 is already installed
+CUDA_HOME=PATH/TO/CONDA/envs/maskgs pip install submodules/mask-diff-gaussian-rasterization submodules/diff-gaussian-rasterization submodules/simple-knn/
 ```
 
 ## Data Preparation
-Please follow the original [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) to prepare the datasets: Mip-Nerf360, Tanks&Temples, and Deep Blending.
+First, create a ```data/``` folder inside the project path by 
 
-## Running
-1. **Train the model**
 ```
-python train.py -s <path to COLMAP or NeRF Synthetic dataset> --eval -m <output_folder>
+mkdir data
 ```
-2. **Save the result in original 3DGS format**
+
+The data structure will be organised as follows:
+
 ```
-python save_ply_nomask.py -m <output_folder>
+data/
+├── gs_datasets
+│   ├── scene1/
+│   │   ├── images
+│   │   │   ├── IMG_0.jpg
+│   │   │   ├── IMG_1.jpg
+│   │   │   ├── ...
+│   │   ├── sparse/
+│   │       └──0/
+│   ├── scene2/
+│   │   ├── images
+│   │   │   ├── IMG_0.jpg
+│   │   │   ├── IMG_1.jpg
+│   │   │   ├── ...
+│   │   ├── sparse/
+│   │       └──0/
+...
 ```
-The result will be save to `<outputfolder>/point_cloud/<last_iteration+1>/point_cloud.ply`, and can be rendered and viewed just like original 3DGS.
 
-## Evaluation
-We recommend directly using the original [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) to evaluate the resulting ply file from the last step.
+### Public Data
 
-## Hyperparameters
-The default configuration applies masks throughout the training process and strikes a balance between reconstruction quality, number of primitives and GPU consumption. 
+- The MipNeRF360 scenes are provided by the paper author [here](https://jonbarron.info/mipnerf360/). 
+- The SfM data sets for Tanks&Temples and Deep Blending are hosted by 3D-Gaussian-Splatting [here](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/datasets/input/tandt_db.zip).
 
-To use masks in different phases, the following hyperparameters should be changed:
+## Training and Evaluation
+To train, render and evaluate our method on the 3 datasets, simply run:
+```
+python run_all.py
+```
 
- - **--lambda_mask**: the coefficient of the mask loss added to the total loss. Default: 0.0005
- - **--mask_type**: have 3 options. 'constant': use masks all the way. 'halfway': use masks after 15,000 iterations. 'late': use masks during 19,000~20,000 iterations. Default: 'constant'.
+## Post-training and evaluation
+To prune an already trained 3DGS, specify its checkpoint path in `scripts/run_prune_finetune.sh` and run:
+```
+bash scripts/run_prune_finetune.sh
+```
 
-We provide 2 recommended configurations:<br/>
-**Best PSNR + least number of Gaussian primitives**: `--lambda_mask 0.1 --mask_type late` <br/>
-**Save GPU memory in training**: `--lambda_mask 0.001 --mask_type constant`
 
+## LICENSE
+
+Please follow the LICENSE of [3D-GS](https://github.com/graphdeco-inria/gaussian-splatting).
 
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
@@ -70,3 +103,7 @@ We provide 2 recommended configurations:<br/>
 }</code></pre>
   </div>
 </section>
+
+## Acknowledgement
+
+This project is built upon [3D-GS](https://github.com/graphdeco-inria/gaussian-splatting), [Compact-3DGS](https://github.com/maincold2/Compact-3DGS), and [LightGaussian](https://github.com/VITA-Group/LightGaussian). We thank all authors for their great work!
