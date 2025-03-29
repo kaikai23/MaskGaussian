@@ -89,6 +89,10 @@ bash scripts/run_prune_finetune.sh
 
 Please follow the LICENSE of [3D-GS](https://github.com/graphdeco-inria/gaussian-splatting).
 
+## Contact
+
+- Yifei Liu: liuyifei@pjlab.org.cn
+
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
