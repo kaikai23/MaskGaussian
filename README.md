@@ -84,10 +84,13 @@ To prune an already trained 3DGS, specify its checkpoint path in `scripts/run_pr
 bash scripts/run_prune_finetune.sh
 ```
 
-
 ## LICENSE
 
 Please follow the LICENSE of [3D-GS](https://github.com/graphdeco-inria/gaussian-splatting).
+
+## TODO List
+- \[ \] Code of MaskGaussian + Taming-3DGS.
+- \[x\] Support post-training.
 
 ## Contact
 
