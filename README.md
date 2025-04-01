@@ -72,11 +72,35 @@ data/
 - The MipNeRF360 scenes are provided by the paper author [here](https://jonbarron.info/mipnerf360/). 
 - The SfM data sets for Tanks&Temples and Deep Blending are hosted by 3D-Gaussian-Splatting [here](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/datasets/input/tandt_db.zip).
 
-## Training and Evaluation
-To train, render and evaluate our method on the 3 datasets, simply run:
+## Training and Evaluation in One Go
+To train, render and evaluate our method on the 3 datasets in the paper, simply run:
 ```
 python run_all.py
 ```
+The training output is logged in `train.log` under the `output/scene_name` folder, and the final metrics are recorded in `results.json` under the same folder. The training time can be read from `train.log`, and GPU memory consumption can be read from `GPU_mem` card in tensorboard records by running `tensorboard --logdir /path/to/output`.
+Finally, note that **the output of our method is 100% in vanilla format and can be viewed directly in any 3dgs viewer**, such as popular [SuperSplat](https://superspl.at/editor) and [antimatter15](https://antimatter15.com/splat/).
+
+## Training a single scene
+To train a single scene, run:
+```
+python train.py -s /path/to/input_scene --eval -m /path/to/output
+```
+with optional parameters:
+
+• **--lambda_mask**: the coefficient of mask loss
+
+• **--mask_from_iter**: the start iteration for mask loss
+
+• **--mask_until_iter**: the end iteration for mask loss
+
+There are 3 settings in the paper, and their configurations can be found in `run_all.py`.
+
+Last, to render and evaluate the test set, run:
+```
+python render.py -m /path/to/output --skip_train
+python metrics.py -m /path/to/output
+```
+Since we do not save mask, no special handling is required for evaluation.
 
 ## Post-training and evaluation
 To prune an already trained 3DGS, specify its checkpoint path in `scripts/run_prune_finetune.sh` and run:
