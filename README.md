@@ -2,9 +2,9 @@
 
 <div id="top" align="center">
  
-<a href="https://arxiv.org/abs/2412.20522"><img src="https://img.shields.io/badge/Arxiv-2412.20522-B31B1B.svg"></a>
-<a href=""><img src="https://img.shields.io/badge/Project-Page-048C3D"></a>
-<a href="https://github.com/kaikai23/MaskGaussian"><img src="https://img.shields.io/github/stars/kaikai23/MaskGaussian"></a>
+<a href="https://arxiv.org/abs/2412.20522"><img src="https://img.shields.io/badge/Read-Paper-B31B1B.svg" height="23"></a>
+<a href="https://maskgaussian.github.io/"><img src="https://img.shields.io/badge/Project-Page-048C3D" height="23"></a>
+<a href="https://github.com/kaikai23/MaskGaussian"><img src="https://img.shields.io/github/stars/kaikai23/MaskGaussian" height="23"></a>
 </div>
 
 
