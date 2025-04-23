@@ -77,7 +77,7 @@ To train, render and evaluate our method on the 3 datasets in the paper, simply 
 ```
 python run_all.py
 ```
-The training output is logged in `train.log` under the `output/scene_name` folder, and the final metrics are recorded in `results.json` under the same folder. The training time can be read from `train.log`, and GPU memory consumption can be read from `GPU_mem` card in tensorboard records by running `tensorboard --logdir /path/to/output`.
+The training output is logged in `train.log` under the `output/scene_name` folder, and the final metrics are recorded in `results.json` under the same folder. The training time can be read from `train.log`, and GPU memory consumption can be read from `GPU_mem` card in tensorboard records by running `tensorboard --logdir /path/to/output` (when testing GPU memory, please use --data_device cpu).
 Finally, note that **the output of our method is 100% in vanilla format and can be viewed directly in any 3dgs viewer**, such as popular [SuperSplat](https://superspl.at/editor) and [antimatter15](https://antimatter15.com/splat/).
 
 ## Training a single scene
