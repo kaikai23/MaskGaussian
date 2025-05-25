@@ -276,20 +276,20 @@ class GaussianModel:
         mkdir_p(os.path.dirname(path))
         mask = self.get_mask
         mask = mask.to(torch.bool).squeeze(1)
-        self._xyz = self._xyz[mask]
-        self._features_dc = self._features_dc[mask]
-        self._features_rest = self._features_rest[mask]
-        self._opacity = self._opacity[mask]
-        self._scaling = self._scaling[mask]
-        self._rotation = self._rotation[mask]
+        # self._xyz = self._xyz[mask]
+        # self._features_dc = self._features_dc[mask]
+        # self._features_rest = self._features_rest[mask]
+        # self._opacity = self._opacity[mask]
+        # self._scaling = self._scaling[mask]
+        # self._rotation = self._rotation[mask]
 
-        xyz = self._xyz.detach().cpu().numpy()
+        xyz = self._xyz[mask].detach().cpu().numpy()
         normals = np.zeros_like(xyz)
-        f_dc = self._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
-        f_rest = self._features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
-        opacities = self._opacity.detach().cpu().numpy()
-        scale = self._scaling.detach().cpu().numpy()
-        rotation = self._rotation.detach().cpu().numpy()
+        f_dc = self._features_dc[mask].detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        f_rest = self._features_rest[mask].detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()
+        opacities = self._opacity[mask].detach().cpu().numpy()
+        scale = self._scaling[mask].detach().cpu().numpy()
+        rotation = self._rotation[mask].detach().cpu().numpy()
 
         dtype_full = [(attribute, 'f4') for attribute in self.construct_list_of_attributes_default()]
 
