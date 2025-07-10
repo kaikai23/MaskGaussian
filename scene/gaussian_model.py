@@ -298,7 +298,7 @@ class GaussianModel:
         elements[:] = list(map(tuple, attributes))
         el = PlyElement.describe(elements, 'vertex')
         PlyData([el]).write(path)
-        ic(f"Saving Gaussians. Number of Gaussians: {self._xyz.shape[0]}")
+        ic(f"Saving Gaussians. Number of Gaussians: {self._xyz[mask].shape[0]}")
 
     def reset_opacity(self):
         opacities_new = inverse_sigmoid(torch.min(self.get_opacity, torch.ones_like(self.get_opacity)*0.01))
