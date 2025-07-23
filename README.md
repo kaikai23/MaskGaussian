@@ -9,6 +9,8 @@
 
 
 ## :mega: Updates
+[07/2025] 🎈: We propose **mask-Grendel-GS**, combining **MaskGaussian** and **Grendel-GS** to support pruning in distributed training. This framework holds potential for pruning messive gaussian points in large scale scenes, where the excessive gaussian number is a main bottleneck. [https://github.com/kaikai23/mask-Grendel-GS/](https://github.com/kaikai23/mask-Grendel-GS/)
+
 [03/2025] 🎈: Post-training code is released. Now you can also directly use MaskGaussian to prune an already trained 3D-GS!
 
 [02/2025] Accepted to [CVPR 2025](https://cvpr.thecvf.com/).
