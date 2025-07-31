@@ -133,7 +133,7 @@ Please follow the LICENSE of [3D-GS](https://github.com/graphdeco-inria/gaussian
     year      = {2025},
     pages     = {681-690}
 }
-}</code></pre>
+</code></pre>
   </div>
 </section>
 
