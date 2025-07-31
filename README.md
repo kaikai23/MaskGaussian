@@ -125,14 +125,14 @@ Please follow the LICENSE of [3D-GS](https://github.com/graphdeco-inria/gaussian
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code>@misc{liu2024maskgaussianadaptive3dgaussian,
-      title={MaskGaussian: Adaptive 3D Gaussian Representation from Probabilistic Masks}, 
-      author={Yifei Liu and Zhihang Zhong and Yifan Zhan and Sheng Xu and Xiao Sun},
-      year={2024},
-      eprint={2412.20522},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2412.20522}, 
+    <pre><code>@InProceedings{Liu_2025_CVPR,
+    author    = {Liu, Yifei and Zhong, Zhihang and Zhan, Yifan and Xu, Sheng and Sun, Xiao},
+    title     = {MaskGaussian: Adaptive 3D Gaussian Representation from Probabilistic Masks},
+    booktitle = {Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR)},
+    month     = {June},
+    year      = {2025},
+    pages     = {681-690}
+}
 }</code></pre>
   </div>
 </section>
