@@ -130,7 +130,7 @@ Please follow the LICENSE of [3D-GS](https://github.com/graphdeco-inria/gaussian
     <pre><code>@InProceedings{Liu_2025_CVPR,
     author    = {Liu, Yifei and Zhong, Zhihang and Zhan, Yifan and Xu, Sheng and Sun, Xiao},
     title     = {MaskGaussian: Adaptive 3D Gaussian Representation from Probabilistic Masks},
-    booktitle = {Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR)},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
     month     = {June},
     year      = {2025},
     pages     = {681-690}
